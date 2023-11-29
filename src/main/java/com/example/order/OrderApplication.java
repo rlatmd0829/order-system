@@ -1,25 +1,47 @@
 package com.example.order;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.example.order.domain.Category;
+import com.example.order.domain.Item;
+import com.example.order.domain.Order;
+import com.example.order.repository.ItemRepository;
+import com.example.order.service.CSVDataService;
+
 @SpringBootApplication
-public class OrderApplication {
-	public static List<Item> items = new ArrayList<>();
-	public static List<Category> categories = new ArrayList<>();
+public class OrderApplication implements CommandLineRunner {
 	public static Scanner sc = new Scanner(System.in);
+
+	@Autowired
+	public CSVDataService csvDataService;
+
+	@Autowired
+	public ItemRepository itemRepository;
+
+	@Autowired
+	DataSource dataSource;
 
 	public static void main(String[] args) {
 		SpringApplication.run(OrderApplication.class, args);
-		run();
 	}
 
-	public static void run() {
+	@Override
+	public void run(String... args) throws Exception {
 		prepare();
+		runConsoleApp();
+	}
+
+	public void runConsoleApp() {
 		System.out.print("입력(o[order]: 주문, q[quit]: 종료) : ");
 		String a = sc.next();
 		if (a.equals("o")) {
@@ -34,21 +56,18 @@ public class OrderApplication {
 		}
 	}
 
-	public static void order() {
-		System.out.println("카테고리를 선택해주세요.");
-		System.out.print("1.상의 / 2.하의 / 3.신발 : ");
-		int categoryNumber = sc.nextInt();
+	public void order() {
+		// System.out.println("카테고리를 선택해주세요.");
+		// System.out.print("1.상의 / 2.하의 / 3.신발 : ");
+		// int categoryNumber = sc.nextInt();
 
-		System.out.println("상품번호   상품명      판매가격   재고수");
+		List<Item> items = itemRepository.findAll();
+
+		System.out.println("상품번호     상품명                                                판매가격     재고수");
 		for (Item item : items) {
-			if (item.getCategoryId() == categoryNumber) {
-				String formattedId = String.format("%-9s", item.getId());
-				String formattedName = String.format("%-9s", item.getName());
-				String formattedAmount = String.format("%-9s", item.getAmount());
-				String formattedQuantity = String.format("%-5s", item.getQuantity());
-
-				System.out.println(formattedId + formattedName + formattedAmount + formattedQuantity);
-			}
+			// if (item.getCategoryId() == categoryNumber) {
+			System.out.printf("%-10s %-50s %-10s %-1s \n", item.getNumber(), item.getName(), item.getAmount(), item.getQuantity());
+			// }
 		}
 		System.out.println();
 
@@ -61,7 +80,7 @@ public class OrderApplication {
 
 			if (orderNumber == 0) {
 				if (!orders.isEmpty()) {
-					receipt(orders);
+					receipt(orders, items);
 				}
 				break;
 			}
@@ -71,7 +90,7 @@ public class OrderApplication {
 
 			if (orderQuantity == 0) {
 				if (!orders.isEmpty()) {
-					receipt(orders);
+					receipt(orders, items);
 				}
 				break;
 			}
@@ -82,7 +101,7 @@ public class OrderApplication {
 
 	}
 
-	public static void receipt(List<Order> orders) {
+	public void receipt(List<Order> orders, List<Item> items) {
 		System.out.println("주문 내역 : ");
 		System.out.println("-------------------------------");
 		int orderAmount = 0;
@@ -90,7 +109,7 @@ public class OrderApplication {
 		int deliveryCharge = 2500;
 		for (Order order : orders) {
 			for (Item item : items) {
-				if (item.getId() == order.getNumber()) {
+				if (item.getNumber().equals(order.getNumber())) {
 					if (item.getQuantity() < order.getQuantity()) {
 						System.out.println("SoldOutException 발생. 주문한 상품량이 재고량보다 큽니다.");
 						break;
@@ -98,6 +117,7 @@ public class OrderApplication {
 					orderAmount += item.getAmount() * order.getQuantity();
 					System.out.println(item.getName() + " - " + order.getQuantity() + "개");
 					item.updateQuantity(item.getQuantity() - order.getQuantity());
+					itemRepository.save(item);
 				}
 			}
 		}
@@ -106,40 +126,17 @@ public class OrderApplication {
 		System.out.println("주문금액 : " + orderAmount + "원");
 		if (orderAmount < 50000) {
 			paymentAmount += orderAmount + deliveryCharge;
+		} else {
+			paymentAmount = orderAmount;
 		}
 		System.out.println("-------------------------------");
 		System.out.println("지불금액 : " + paymentAmount + "원");
 		System.out.println("-------------------------------");
-		run();
+		runConsoleApp();
 	}
 
-	public static void prepare() {
-		Category category1 = new Category(1, "상의");
-		Category category2 = new Category(2, "하의");
-		Category category3 = new Category(3, "신발");
-		categories.add(category1);
-		categories.add(category2);
-		categories.add(category3);
-
-		Item shirt1 = new Item(1, 1, "티셔츠1", 5000, 20);
-		Item shirt2 = new Item(2, 1, "티셔츠2", 10000, 5);
-		Item shirt3 = new Item(3, 1, "티셔츠3", 13000, 2);
-		Item pants1 = new Item(4, 2, "바지1", 23000, 7);
-		Item pants2 = new Item(5, 2, "바지2", 30000, 5);
-		Item shoes1 = new Item(6, 3, "신발1", 50000, 8);
-		Item shoes2 = new Item(7, 3, "신발2", 65000, 2);
-		Item shoes3 = new Item(8, 3, "신발3", 120000, 1);
-		Item shoes4 = new Item(9, 3, "신발4", 60000, 6);
-		items.add(shirt1);
-		items.add(shirt2);
-		items.add(shirt3);
-		items.add(pants1);
-		items.add(pants2);
-		items.add(shoes1);
-		items.add(shoes2);
-		items.add(shoes3);
-		items.add(shoes4);
-
+	public void prepare() {
+		csvDataService.readDataAndSaveToDB();
 	}
 
 }
