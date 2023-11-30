@@ -23,10 +23,15 @@ public class OutputController {
 		System.out.println("SoldOutException 발생. 주문한 상품량이 재고량보다 큽니다.");
 	}
 
-	public static void order(List<Item> items) {
+	public static void order(List<Item> items, int categoryNumber) {
 		System.out.println("상품번호     상품명                                                판매가격     재고수");
 		for (Item item : items) {
-			System.out.printf("%-10s %-50s %-10s %-1s \n", item.getNumber(), item.getName(), item.getAmount(), item.getQuantity());
+			if (item.getCategory().getNumber() == categoryNumber) {
+				System.out.printf(
+					"%-10s %-50s %-10s %-1s \n", item.getNumber(), item.getName(), item.getAmount(),
+					item.getQuantity()
+				);
+			}
 		}
 		System.out.println();
 	}

@@ -1,10 +1,12 @@
 package com.example.order.service;
 
 import java.io.FileReader;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.example.order.domain.Item;
+import com.example.order.enumclass.Category;
 import com.example.order.repository.ItemRepository;
 import com.opencsv.CSVReader;
 
@@ -22,12 +24,15 @@ public class CSVDataService {
 			reader.readNext();
 			String[] line;
 			while ((line = reader.readNext()) != null) {
+
 				Item item = new Item(
 					Integer.valueOf(line[0]),
-					line[1],
-					Integer.valueOf(line[2]),
-					Integer.valueOf(line[3])
+					Category.valueOf(line[1]),
+					line[2],
+					Integer.valueOf(line[3]),
+					Integer.valueOf(line[4])
 				);
+
 				itemRepository.save(item);
 			}
 		} catch (Exception e) {

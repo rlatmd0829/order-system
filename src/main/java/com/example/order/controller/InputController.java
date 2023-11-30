@@ -11,7 +11,11 @@ public class InputController {
 		return sc.next();
 	}
 
-
+	public static int orderCategory() {
+		System.out.println("카테고리 번호를 입력해주세요.");
+		System.out.print("1.상의 / 2.하의 / 3.신발 : ");
+		return sc.nextInt();
+	}
 
 	public static int orderNumber() {
 		System.out.println("더이상 주문하지 않으려면 0을 입력해주세요.");

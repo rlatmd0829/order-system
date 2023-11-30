@@ -53,13 +53,12 @@ public class OrderApplication implements CommandLineRunner {
 	}
 
 	public void order() {
-		// System.out.println("카테고리를 선택해주세요.");
-		// System.out.print("1.상의 / 2.하의 / 3.신발 : ");
-		// int categoryNumber = sc.nextInt();
+
+		int categoryNumber = InputController.orderCategory();
 
 		List<Item> items = itemRepository.findAll();
 
-		OutputController.order(items);
+		OutputController.order(items, categoryNumber);
 
 		// System.out.println("상품번호     상품명                                                판매가격     재고수");
 		// for (Item item : items) {
