@@ -1,26 +1,17 @@
-package com.example.order.controller;
+package com.example.order.util;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.example.order.domain.Item;
 
-public class OutputController {
+public class Output {
 	public static void orderStart() {
 		System.out.println("주문을 시작합니다.");
 	}
 
 	public static void orderExit() {
 		System.out.println("고객님의 주문 감사합니다.");
-	}
-
-	public static void orderInvalid() {
-		// TODO : 에러로 빼는게 좋을듯
-		System.out.println("잘못입력했습니다.");
-	}
-
-	public static void orderError() {
-		// TODO : 에러로 빼는게 좋을듯
-		System.out.println("SoldOutException 발생. 주문한 상품량이 재고량보다 큽니다.");
 	}
 
 	public static void order(List<Item> items, int categoryNumber) {
@@ -50,5 +41,11 @@ public class OutputController {
 		System.out.println("-------------------------------");
 		System.out.println("지불금액 : " + paymentAmount + "원");
 		System.out.println("-------------------------------");
+	}
+
+	public static void info(int itemNumber, String itemName, int orderQuantity) {
+		LocalDate now = LocalDate.now();
+		System.out.println("결제 날짜 : " + now);
+		System.out.println(itemNumber + " : " + itemName + " - " + orderQuantity + "개");
 	}
 }

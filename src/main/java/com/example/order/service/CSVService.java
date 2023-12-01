@@ -1,7 +1,6 @@
 package com.example.order.service;
 
 import java.io.FileReader;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CSVDataService {
+public class CSVService {
 
 	private final ItemRepository itemRepository;
 

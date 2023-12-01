@@ -1,8 +1,8 @@
-package com.example.order.controller;
+package com.example.order.util;
 
 import java.util.Scanner;
 
-public class InputController {
+public class Input {
 
 	private static Scanner sc = new Scanner(System.in);
 
