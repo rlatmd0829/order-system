@@ -1,9 +1,10 @@
 package com.example.order.util;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.example.order.domain.Item;
+import com.example.order.domain.Order;
+import com.example.order.domain.Payment;
 
 public class Output {
 	public static void orderStart() {
@@ -27,9 +28,15 @@ public class Output {
 		System.out.println();
 	}
 
-	public static void orderReceipt() {
+	public static void orderReceipt(List<Order> orders) {
 		System.out.println("주문 내역 : ");
 		System.out.println("-------------------------------");
+
+		for (Order order : orders) {
+			System.out.println(
+				order.getItem().getNumber() + " : " + order.getItem().getName() + " - " + order.getQuantity() + "개");
+		}
+
 	}
 
 	public static void orderAmount(int orderAmount) {
@@ -43,9 +50,9 @@ public class Output {
 		System.out.println("-------------------------------");
 	}
 
-	public static void info(int itemNumber, String itemName, int orderQuantity) {
-		LocalDate now = LocalDate.now();
-		System.out.println("결제 날짜 : " + now);
-		System.out.println(itemNumber + " : " + itemName + " - " + orderQuantity + "개");
-	}
+	// public static void orderInfo(int itemNumber, String itemName, int orderQuantity) {
+	// 	// LocalDate now = LocalDate.now();
+	// 	// System.out.println("결제 날짜 : " + now);
+	// 	System.out.println(itemNumber + " : " + itemName + " - " + orderQuantity + "개");
+	// }
 }

@@ -1,19 +1,20 @@
 package com.example.order.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.order.exception.InvalidInputException;
-import com.example.order.exception.SoldOutException;
-import com.example.order.util.Input;
-import com.example.order.util.Output;
 import com.example.order.domain.Item;
 import com.example.order.domain.Order;
+import com.example.order.enumclass.OrderStatus;
+import com.example.order.exception.InvalidInputException;
+import com.example.order.exception.SoldOutException;
 import com.example.order.repository.ItemRepository;
+import com.example.order.repository.OrderRepository;
+import com.example.order.util.Input;
+import com.example.order.util.Output;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,15 +23,18 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class OrderService {
 
+	private final PaymentService paymentService;
+
 	private final ItemRepository itemRepository;
+	private final OrderRepository orderRepository;
 
 	public void start() {
-		String a = Input.main();
+		String action = Input.main();
 
-		if (a.equals("o")) {
+		if (action.equals("o")) {
 			Output.orderStart();
 			order();
-		} else if (a.equals("q") || a.equals("quit")) {
+		} else if (action.equals("q") || action.equals("quit")) {
 			Output.orderExit();
 			System.exit(0);
 		} else {
@@ -45,63 +49,41 @@ public class OrderService {
 
 		Output.order(items, categoryNumber);
 
-		List<Order> orders = new ArrayList<>();
-
 		while (true) {
 			int orderNumber = Input.orderNumber();
 
 			if (orderNumber == 0) {
-				if (!orders.isEmpty()) {
-					receipt(orders);
-				}
+				orderReceipt();
 				break;
 			}
+
+			Item item = itemRepository.findByNumber(orderNumber)
+				.orElseThrow(InvalidInputException::new);
 
 			int orderQuantity = Input.orderQuantity();
 
 			if (orderQuantity == 0) {
-				if (!orders.isEmpty()) {
-					receipt(orders);
-				}
+				orderReceipt();
 				break;
 			}
-			Order order = new Order(orderNumber, orderQuantity);
-			orders.add(order);
+
+			Order order = new Order(orderQuantity);
+
+			if (item.getQuantity() < order.getQuantity()) {
+				throw new SoldOutException();
+			}
+
+			item.addOrder(order);
+			item.updateQuantity(item.getQuantity() - order.getQuantity());
 		}
 		start();
 	}
 
-	public void receipt(List<Order> orders) {
-		List<Item> items = itemRepository.findAll();
+	public void orderReceipt() {
+		List<Order> orders = orderRepository.findOrdersByStatus(OrderStatus.READY);
 
-		Output.orderReceipt();
-		int orderAmount = 0;
-		int paymentAmount = 0;
-		int deliveryCharge = 3000;
-		for (Order order : orders) {
-			for (Item item : items) {
-				if (item.getNumber().equals(order.getNumber())) {
-					if (item.getQuantity() < order.getQuantity()) {
-						throw new SoldOutException();
-					}
-					orderAmount += item.getAmount() * order.getQuantity();
-					Output.info(
-						item.getNumber(),
-						item.getName(),
-						order.getQuantity()
-					);
-					item.updateQuantity(item.getQuantity() - order.getQuantity());
-					itemRepository.save(item);
-				}
-			}
-		}
-		Output.orderAmount(orderAmount);
-		if (orderAmount < 50000) {
-			paymentAmount += orderAmount + deliveryCharge;
-		} else {
-			paymentAmount = orderAmount;
-		}
-		Output.paymentAmount(paymentAmount);
+		Output.orderReceipt(orders);
+		paymentService.payment(orders);
 	}
 
 }
