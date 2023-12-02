@@ -16,14 +16,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.example.order.enumclass.Category;
+import com.example.order.exception.SoldOutException;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Entity
 @NoArgsConstructor
 @Table(name = "items")
+@Slf4j
 public class Item {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,8 +59,15 @@ public class Item {
 		this.quantity = quantity;
 	}
 
-	public void updateQuantity(Integer quantity) {
-		this.quantity = quantity;
+	public synchronized void decrease(Integer quantity) {
+		if (this.quantity < quantity) {
+			throw new SoldOutException();
+		}
+		Integer remainQuantity = this.quantity - quantity;
+
+		log.info(String.valueOf(remainQuantity));
+
+		this.quantity = remainQuantity;
 	}
 
 	public void addOrder(Order order) {

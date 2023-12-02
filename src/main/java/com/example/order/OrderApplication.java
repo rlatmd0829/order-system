@@ -3,6 +3,7 @@ package com.example.order;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Profile;
 
 import com.example.order.service.CSVService;
 import com.example.order.service.OrderService;

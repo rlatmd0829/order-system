@@ -10,7 +10,6 @@ import com.example.order.domain.Item;
 import com.example.order.domain.Order;
 import com.example.order.enumclass.OrderStatus;
 import com.example.order.exception.InvalidInputException;
-import com.example.order.exception.SoldOutException;
 import com.example.order.repository.ItemRepository;
 import com.example.order.repository.OrderRepository;
 import com.example.order.util.Input;
@@ -69,12 +68,9 @@ public class OrderService {
 
 			Order order = new Order(orderQuantity);
 
-			if (item.getQuantity() < order.getQuantity()) {
-				throw new SoldOutException();
-			}
-
 			item.addOrder(order);
-			item.updateQuantity(item.getQuantity() - order.getQuantity());
+
+			stockDecrease(item, orderQuantity);
 		}
 		start();
 	}
@@ -86,4 +82,7 @@ public class OrderService {
 		paymentService.payment(orders);
 	}
 
+	public void stockDecrease(Item item, Integer orderQuantity) {
+		item.decrease(orderQuantity);
+	}
 }
