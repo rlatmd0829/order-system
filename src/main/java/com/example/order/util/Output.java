@@ -4,18 +4,14 @@ import java.util.List;
 
 import com.example.order.domain.Item;
 import com.example.order.domain.Order;
-import com.example.order.domain.Payment;
 
 public class Output {
-	public static void orderStart() {
-		System.out.println("주문을 시작합니다.");
-	}
 
 	public static void orderExit() {
 		System.out.println("고객님의 주문 감사합니다.");
 	}
 
-	public static void order(List<Item> items, int categoryNumber) {
+	public static void itemInfo(List<Item> items, int categoryNumber) {
 		System.out.println("상품번호     상품명                                                판매가격     재고수");
 		for (Item item : items) {
 			if (item.getCategory().getNumber() == categoryNumber) {
@@ -49,10 +45,4 @@ public class Output {
 		System.out.println("지불금액 : " + paymentAmount + "원");
 		System.out.println("-------------------------------");
 	}
-
-	// public static void orderInfo(int itemNumber, String itemName, int orderQuantity) {
-	// 	// LocalDate now = LocalDate.now();
-	// 	// System.out.println("결제 날짜 : " + now);
-	// 	System.out.println(itemNumber + " : " + itemName + " - " + orderQuantity + "개");
-	// }
 }

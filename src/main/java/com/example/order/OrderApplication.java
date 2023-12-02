@@ -5,8 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Profile;
 
+import com.example.order.exception.InvalidInputException;
 import com.example.order.service.CSVService;
+import com.example.order.service.ItemService;
 import com.example.order.service.OrderService;
+import com.example.order.util.Input;
+import com.example.order.util.Output;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +20,7 @@ public class OrderApplication implements CommandLineRunner {
 
 	public final CSVService csvService;
 	public final OrderService orderService;
+	public final ItemService itemService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(OrderApplication.class, args);
@@ -24,6 +29,28 @@ public class OrderApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		csvService.readDataAndSaveToDB();
-		orderService.start();
+		start();
+	}
+
+	public void start() {
+		String action = Input.main();
+
+		if (action.equals("o")) {
+			itemService.itemInfo();
+
+			while (true) {
+				if (!orderService.order()) {
+					break;
+				}
+			}
+
+		} else if (action.equals("q") || action.equals("quit")) {
+			Output.orderExit();
+			System.exit(0);
+		} else {
+			throw new InvalidInputException();
+		}
+
+		start();
 	}
 }
