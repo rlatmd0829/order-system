@@ -1,4 +1,4 @@
-package com.example.order.util;
+package com.example.order.ui;
 
 import java.util.Scanner;
 

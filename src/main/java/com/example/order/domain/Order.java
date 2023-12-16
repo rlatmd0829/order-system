@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class Order {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer id;
+	private Integer id;
 
 	@Column(nullable = false)
 	private Integer quantity;

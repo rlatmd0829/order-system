@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import com.example.order.enumclass.Category;
 import com.example.order.exception.SoldOutException;
@@ -51,6 +52,9 @@ public class Item {
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Order> orders = new ArrayList<>();
 
+	@Version
+	private Integer version;
+
 	public Item(Integer number, Category category, String name, Integer amount, Integer quantity) {
 		this.number = number;
 		this.category = category;
@@ -59,7 +63,7 @@ public class Item {
 		this.quantity = quantity;
 	}
 
-	public synchronized void decrease(Integer quantity) {
+	public void decrease(Integer quantity) {
 		if (this.quantity < quantity) {
 			throw new SoldOutException();
 		}

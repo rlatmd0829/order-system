@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.order.domain.Item;
 import com.example.order.repository.ItemRepository;
-import com.example.order.util.Input;
-import com.example.order.util.Output;
+import com.example.order.ui.Input;
+import com.example.order.ui.Output;
 
 import lombok.RequiredArgsConstructor;
 

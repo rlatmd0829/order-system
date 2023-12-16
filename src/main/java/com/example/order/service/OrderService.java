@@ -12,14 +12,13 @@ import com.example.order.enumclass.OrderStatus;
 import com.example.order.exception.InvalidInputException;
 import com.example.order.repository.ItemRepository;
 import com.example.order.repository.OrderRepository;
-import com.example.order.util.Input;
-import com.example.order.util.Output;
+import com.example.order.ui.Input;
+import com.example.order.ui.Output;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class OrderService {
 
 	private final PaymentService paymentService;
@@ -27,6 +26,7 @@ public class OrderService {
 	private final ItemRepository itemRepository;
 	private final OrderRepository orderRepository;
 
+	@Transactional
 	public boolean order() {
 		int orderNumber = Input.orderNumber();
 

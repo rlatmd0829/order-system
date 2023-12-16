@@ -3,14 +3,13 @@ package com.example.order;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Profile;
 
 import com.example.order.exception.InvalidInputException;
 import com.example.order.service.CSVService;
 import com.example.order.service.ItemService;
 import com.example.order.service.OrderService;
-import com.example.order.util.Input;
-import com.example.order.util.Output;
+import com.example.order.ui.Input;
+import com.example.order.ui.Output;
 
 import lombok.RequiredArgsConstructor;
 

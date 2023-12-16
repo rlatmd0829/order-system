@@ -26,13 +26,13 @@ import lombok.NoArgsConstructor;
 public class Payment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer id;
+	private Integer id;
 
 	@Column(nullable = false)
-	public LocalDate paymentDate;
+	private LocalDate paymentDate;
 
 	@OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	public List<Order> orders = new ArrayList<>();
+	private List<Order> orders = new ArrayList<>();
 
 	public Payment(LocalDate paymentDate, List<Order> orders) {
 		this.paymentDate = paymentDate;

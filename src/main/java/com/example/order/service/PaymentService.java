@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.order.domain.Order;
 import com.example.order.domain.Payment;
 import com.example.order.repository.PaymentRepository;
-import com.example.order.util.Output;
+import com.example.order.ui.Output;
 
 import lombok.RequiredArgsConstructor;
 
